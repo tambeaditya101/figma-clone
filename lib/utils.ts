@@ -1,5 +1,5 @@
-import jsPDF from "jspdf";
-import { twMerge } from "tailwind-merge";
+// import jsPDF from "jspdf";
+// import { twMerge } from "tailwind-merge";
 import { type ClassValue, clsx } from "clsx";
 
 const adjectives = [
@@ -34,9 +34,9 @@ const animals = [
   "Crocodile",
 ];
 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+// export function cn(...inputs: ClassValue[]) {
+//   return twMerge(clsx(inputs));
+// }
 
 export function generateRandomName(): string {
   const randomAdjective =
@@ -104,11 +104,11 @@ export const exportToPdf = () => {
   if (!canvas) return;
 
   // use jspdf
-  const doc = new jsPDF({
-    orientation: "landscape",
-    unit: "px",
-    format: [canvas.width, canvas.height],
-  });
+  // const doc = new jsPDF({
+  //   orientation: "landscape",
+  //   unit: "px",
+  //   format: [canvas.width, canvas.height],
+  // });
 
   // get the canvas data url
   const data = canvas.toDataURL();
