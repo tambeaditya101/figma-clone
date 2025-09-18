@@ -11,7 +11,7 @@ export default function ActiveUser() {
 
   const memoisedActiveUser = useMemo(() => {
     return (
-      <div className="flex justify-center items-center gap-1">
+      <div className="flex justify-center items-center gap-1 py-2">
         <div className="flex pl-3">
           {currentUser && (
             <Avatar
