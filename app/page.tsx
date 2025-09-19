@@ -7,11 +7,15 @@ import Navbar from "@/components/Navbar";
 import RightSideBar from "@/components/RightSideBar";
 import { useEffect, useRef, useState } from "react";
 import {
+  handleCanvaseMouseMove,
   handleCanvasMouseDown,
+  handleCanvasMouseUp,
   handleResize,
   initializeFabric,
 } from "@/lib/canvas";
 import { ActiveElement } from "@/types/type";
+import { useMutation, useStorage } from "@/liveblocks.config";
+import { LiveMap } from "@liveblocks/client";
 
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -19,6 +23,24 @@ export default function Home() {
   const isDrawing = useRef(false);
   const shapeRef = useRef<fabric.Object | null>(null);
   const selectedShapeRef = useRef<string | null>(null);
+  const activeObjectRef = useRef<fabric.Object | null>(null);
+  const canvasObjects = useStorage((root) => root.canvasObjects);
+
+  const syncShapeInStorage = useMutation(({ storage }, object) => {
+    if (!object) return;
+
+    const { objectId } = object;
+    const shapeData = object.toJSON();
+    shapeData.objectId = objectId;
+
+    let canvasObjects = storage.get("canvasObjects");
+    // if not initialized, create it
+    if (!canvasObjects) {
+      canvasObjects = new LiveMap();
+      storage.set("canvasObjects", canvasObjects);
+    }
+    canvasObjects.set(objectId, shapeData);
+  }, []);
 
   const [activeElement, setActiveElement] = useState<ActiveElement>({
     name: "",
@@ -39,6 +61,29 @@ export default function Home() {
         isDrawing,
         shapeRef,
         selectedShapeRef,
+      });
+    });
+
+    canvas.on("mouse:move", (options) => {
+      handleCanvaseMouseMove({
+        options,
+        canvas,
+        isDrawing,
+        shapeRef,
+        selectedShapeRef,
+        syncShapeInStorage,
+      });
+    });
+
+    canvas.on("mouse:up", (options) => {
+      handleCanvasMouseUp({
+        canvas,
+        isDrawing,
+        shapeRef,
+        selectedShapeRef,
+        syncShapeInStorage,
+        setActiveElement,
+        activeObjectRef,
       });
     });
 
