@@ -1,5 +1,5 @@
 // import jsPDF from "jspdf";
-// import { twMerge } from "tailwind-merge";
+import { twMerge } from "tailwind-merge";
 import { type ClassValue, clsx } from "clsx";
 
 const adjectives = [
@@ -34,9 +34,9 @@ const animals = [
   "Crocodile",
 ];
 
-// export function cn(...inputs: ClassValue[]) {
-//   return twMerge(clsx(inputs));
-// }
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 
 export function generateRandomName(): string {
   const randomAdjective =

@@ -13,7 +13,11 @@ import ReactionSelector from "./reaction/ReactionButton";
 import FlyingReaction from "./reaction/FlyingReaction";
 import useInterval from "@/hooks/useInterval";
 
-function Live() {
+type Props = {
+  canvasRef: React.MutableRefObject<HTMLCanvasElement | null>;
+};
+
+function Live({ canvasRef }: Props) {
   const others = useOthers();
   const broadcast = useBroadcastEvent();
   const [{ cursor }, updateMyPresence] = useMyPresence() as any;
@@ -152,15 +156,14 @@ function Live() {
 
   return (
     <div
-      className="flex min-h-screen w-full items-center justify-center bg-gray-100 border-2 border-green-500"
+      id="canvas"
+      className="flex min-h-screen w-full items-center justify-center bg-gray-100 border-2"
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
     >
-      <h1 className="text-6xl font-bold text-blue-600">
-        Tailwind is Working 🎉
-      </h1>
+      <canvas ref={canvasRef} />
       {reactions.map((r) => {
         return (
           <FlyingReaction
