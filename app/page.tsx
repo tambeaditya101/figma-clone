@@ -10,12 +10,16 @@ import {
   handleCanvaseMouseMove,
   handleCanvasMouseDown,
   handleCanvasMouseUp,
+  handleCanvasObjectModified,
   handleResize,
   initializeFabric,
+  renderCanvas,
 } from "@/lib/canvas";
 import { ActiveElement } from "@/types/type";
 import { useMutation, useStorage } from "@/liveblocks.config";
 import { LiveMap } from "@liveblocks/client";
+import { defaultNavElement } from "@/constants";
+import { handleDelete } from "@/lib/key-events";
 
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -47,8 +51,40 @@ export default function Home() {
     value: "",
     icon: "",
   });
+
+  const deleteAllShapes = useMutation(({ storage }) => {
+    const canvasObjects = storage.get("canvasObjects");
+    if (!canvasObjects || canvasObjects.size === 0) return true;
+
+    for (const [key, value] of canvasObjects.entries()) {
+      canvasObjects.delete(key);
+    }
+  }, []);
+
+  const deleteShapeFromStorage = useMutation(({ storage }, objectId) => {
+    const canvasObjects = storage.get("canvasObjects");
+    canvasObjects.delete(objectId);
+  }, []);
+
   const handleActiveElement = (el: ActiveElement) => {
     setActiveElement(el);
+
+    switch (el?.value) {
+      case "reset":
+        deleteAllShapes();
+        fabricRef?.current.clear();
+        setActiveElement(defaultNavElement);
+        break;
+
+      case "delete":
+        handleDelete(fabricRef.current as any, deleteShapeFromStorage);
+        setActiveElement(defaultNavElement);
+        break;
+
+      default:
+        break;
+    }
+
     selectedShapeRef.current = el?.value as string;
   };
   useEffect(() => {
@@ -87,10 +123,25 @@ export default function Home() {
       });
     });
 
+    canvas.on("object:modified", (options) => {
+      handleCanvasObjectModified({
+        options,
+        syncShapeInStorage,
+      });
+    });
+
     window.addEventListener("resize", () => {
       handleResize({ fabricRef });
     });
+
+    return () => {
+      canvas.dispose();
+    };
   }, []);
+
+  useEffect(() => {
+    renderCanvas({ fabricRef, canvasObjects, activeObjectRef });
+  }, [canvasObjects]);
 
   return (
     <main className="h-screen overflow-hidden ">
