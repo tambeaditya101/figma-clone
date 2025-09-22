@@ -73,7 +73,7 @@ export type ModifyShape = {
   canvas: fabric.Canvas;
   property: string;
   value: any;
-  activeObjectRef: React.MutableRefObject<fabric.Object | null>;
+  activeObjectRef: React.RefObject<fabric.Object | null>;
   syncShapeInStorage: (shape: fabric.Object) => void;
 };
 
@@ -85,8 +85,8 @@ export type ElementDirection = {
 
 export type ImageUpload = {
   file: File;
-  canvas: React.MutableRefObject<fabric.Canvas>;
-  shapeRef: React.MutableRefObject<fabric.Object | null>;
+  canvas: React.RefObject<fabric.Canvas>;
+  shapeRef: React.RefObject<fabric.Object | null>;
   syncShapeInStorage: (shape: fabric.Object) => void;
 };
 
@@ -95,7 +95,7 @@ export type RightSidebarProps = {
   setElementAttributes: React.Dispatch<React.SetStateAction<Attributes>>;
   fabricRef: React.RefObject<fabric.Canvas | null>;
   activeObjectRef: React.RefObject<fabric.Object | null>;
-  isEditingRef: React.MutableRefObject<boolean>;
+  isEditingRef: React.RefObject<boolean>;
   syncShapeInStorage: (obj: any) => void;
 };
 
@@ -116,12 +116,6 @@ export type ShapesMenuProps = {
   handleActiveElement: any;
   handleImageUpload: any;
   imageInputRef: any;
-};
-
-export type Presence = any;
-
-export type LiveCursorProps = {
-  others: readonly User<Presence, BaseUserMeta>[];
 };
 
 export type CanvasMouseDown = {
